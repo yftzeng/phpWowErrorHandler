@@ -10,7 +10,6 @@
  * @license  http://www.opensource.org/licenses/mit-license.php MIT
  * @link     https://github.com/yftzeng/phpWowErrorHandler
  */
-
 namespace Wow\Exception;
 
 /**
