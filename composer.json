@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Wow\\Log": "src/"
+            "Wow\\Exception": "src/"
         }
     },
     "minimum-stability": "dev"
