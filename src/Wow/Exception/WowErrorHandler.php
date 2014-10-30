@@ -24,6 +24,7 @@ namespace Wow\Exception;
 class WowErrorHandler
 {
     private $_logger;
+    private $_logger_orig;
     private $_handlerType;
 
     /**
@@ -47,7 +48,7 @@ class WowErrorHandler
             if ($logDir === __DIR__) {
                 $logDir = __DIR__ . '/log';
             }
-            $this->_logger = new \Wow\Log\WowLog($logDir, 0, 'WowErrorHandler');
+            $this->_logger = $logDir;
         }
 
         set_exception_handler(array($this, 'exceptionHandler'));
@@ -87,23 +88,27 @@ class WowErrorHandler
         $error = false
     ) {
         if ($this->_handlerType === 0 || $this->_handlerType === 3) {
+
+            $this->_logger_orig = \Wow\Log\WowLog::getLogDir();
+            \Wow\Log\WowLog::init($this->_logger);
+
             if ($errtype === 'EXCEPTION') {
-                $this->_logger->warn(
+                \Wow\Log\WowLog::warn(
                     $errtype .
                     ', FILE:' . $errfile . ':' . $errline .
-                    ', ERRNO:' . $errno . ', ' . $errstr
+                    ', ERRNO:' . $errno . ', ' . $errstr, 'WowErrorHandler'
                 );
             } else if ($errtype === 'ERROR') {
-                $this->_logger->error(
+                \Wow\Log\WowLog::error(
                     $errtype .
                     ', FILE:' . $errfile . ':' . $errline .
-                    ', ERRNO:' . $errno . ', ' . $errstr
+                    ', ERRNO:' . $errno . ', ' . $errstr, 'WowErrorHandler'
                 );
             } else {
-                $this->_logger->emer(
+                \Wow\Log\WowLog::emer(
                     $errtype .
                     ', FILE:' . $errfile . ':' . $errline .
-                    ', ERRNO:' . $errno . ', ' . $errstr
+                    ', ERRNO:' . $errno . ', ' . $errstr, 'WowErrorHandler'
                 );
             }
 
@@ -117,6 +122,9 @@ class WowErrorHandler
                     $error
                 );
             }
+
+            \Wow\Log\WowLog::init($this->_logger_orig);
+
         } else if ($this->_handlerType === 1) {
             if ($error !== false) {
                 error_log($errtype . ': '.print_r($error, true));
